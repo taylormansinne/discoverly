@@ -11,7 +11,7 @@ const importanceOrder = { critical: 0, high: 1, medium: 2, low: 3 };
 const costOrder = { low: 0, medium: 1, high: 2, 'very-high': 3 };
 
 const Index = () => {
-  const { items, addFeedback, deleteFeedback } = useFeedback();
+  const { items, addFeedback, deleteFeedback, updateFeedback } = useFeedback();
   
   const [themeFilter, setThemeFilter] = useState('all');
   const [importanceFilter, setImportanceFilter] = useState('all');
@@ -107,6 +107,7 @@ const Index = () => {
                     key={item.id}
                     item={item}
                     onDelete={deleteFeedback}
+                    onUpdate={updateFeedback}
                   />
                 ))
               )}

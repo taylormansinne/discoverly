@@ -4,6 +4,7 @@ import { FeedbackForm } from '@/components/FeedbackForm';
 import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackFilters } from '@/components/FeedbackFilters';
 import { StatsOverview } from '@/components/StatsOverview';
+import { FeedbackAnalytics } from '@/components/FeedbackAnalytics';
 import { Importance, CostEstimate } from '@/types/feedback';
 import { BarChart3, Inbox } from 'lucide-react';
 
@@ -75,8 +76,9 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <FeedbackForm onSubmit={addFeedback} />
+            <FeedbackAnalytics items={items} />
           </div>
 
           <div className="lg:col-span-2 space-y-6">

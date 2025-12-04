@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
+import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
 import { Plus, Star } from 'lucide-react';
 
 interface FeedbackFormProps {
@@ -133,12 +133,16 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="source">Source (optional)</Label>
-            <Input
-              id="source"
-              placeholder="e.g., Customer interview, Survey, Support ticket"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-            />
+            <Select value={source} onValueChange={setSource}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select source" />
+              </SelectTrigger>
+              <SelectContent>
+                {SOURCE_OPTIONS.map(s => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <Button type="submit" className="w-full" disabled={!content.trim() || !theme}>

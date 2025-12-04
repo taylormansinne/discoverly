@@ -5,14 +5,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { FeedbackItem, Importance, BusinessAlignment, CostEstimate, THEMES } from '@/types/feedback';
+import { FeedbackItem, Importance, BusinessAlignment, CostEstimate, THEMES, SOURCE_OPTIONS } from '@/types/feedback';
 import { Upload, FileJson, FileText } from 'lucide-react';
 
 interface FeedbackImportProps {
   onImport: (items: Omit<FeedbackItem, 'id' | 'createdAt'>[]) => void;
 }
 
-const SOURCE_OPTIONS = ['Jira', 'Zendesk', 'Intercom', 'Slack', 'CSV', 'Other'] as const;
+
 
 export function FeedbackImport({ onImport }: FeedbackImportProps) {
   const [source, setSource] = useState<string>('Jira');

@@ -40,3 +40,14 @@ export const COST_OPTIONS: { value: CostEstimate; label: string; description: st
   { value: 'high', label: 'High', description: '1-3 months' },
   { value: 'very-high', label: 'Very High', description: '3+ months' }
 ];
+
+export const SOURCE_OPTIONS = [
+  'Jira',
+  'Zendesk',
+  'Intercom',
+  'Slack',
+  'Survey',
+  'Customer Interview',
+  'Support Ticket',
+  'Other'
+] as const;

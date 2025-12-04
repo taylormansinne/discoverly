@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
+import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X } from 'lucide-react';
@@ -129,12 +129,16 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
             </div>
           </div>
 
-          <Input
-            placeholder="Source (optional)"
-            value={editData.source}
-            onChange={(e) => setEditData(prev => ({ ...prev, source: e.target.value }))}
-            className="h-9"
-          />
+          <Select value={editData.source || ''} onValueChange={(v) => setEditData(prev => ({ ...prev, source: v }))}>
+            <SelectTrigger className="h-9">
+              <SelectValue placeholder="Source (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              {SOURCE_OPTIONS.map(s => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={handleCancel}>

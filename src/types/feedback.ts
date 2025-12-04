@@ -11,6 +11,7 @@ export interface FeedbackItem {
   costEstimate: CostEstimate;
   createdAt: Date;
   source?: string;
+  proposalLink?: string;
 }
 
 export const THEMES = [

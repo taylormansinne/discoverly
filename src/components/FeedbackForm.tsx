@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
-import { Plus, Star } from 'lucide-react';
+import { Plus, Star, Link } from 'lucide-react';
 
 interface FeedbackFormProps {
   onSubmit: (item: Omit<FeedbackItem, 'id' | 'createdAt'>) => void;
@@ -19,6 +19,7 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
   const [businessAlignment, setBusinessAlignment] = useState<BusinessAlignment>(3);
   const [costEstimate, setCostEstimate] = useState<CostEstimate>('medium');
   const [source, setSource] = useState('');
+  const [proposalLink, setProposalLink] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +31,8 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
       importance,
       businessAlignment,
       costEstimate,
-      source: source.trim() || undefined
+      source: source.trim() || undefined,
+      proposalLink: proposalLink.trim() || undefined
     });
 
     setContent('');
@@ -39,6 +41,7 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
     setBusinessAlignment(3);
     setCostEstimate('medium');
     setSource('');
+    setProposalLink('');
   };
 
   return (
@@ -131,18 +134,34 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="source">Source (optional)</Label>
-            <Select value={source} onValueChange={setSource}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select source" />
-              </SelectTrigger>
-              <SelectContent>
-                {SOURCE_OPTIONS.map(s => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="source">Source (optional)</Label>
+              <Select value={source} onValueChange={setSource}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select source" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SOURCE_OPTIONS.map(s => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="proposalLink" className="flex items-center gap-1">
+                <Link className="w-3.5 h-3.5" />
+                Proposal Link (optional)
+              </Label>
+              <Input
+                id="proposalLink"
+                type="url"
+                placeholder="https://notion.so/... or Jira ticket URL"
+                value={proposalLink}
+                onChange={(e) => setProposalLink(e.target.value)}
+              />
+            </div>
           </div>
 
           <Button type="submit" className="w-full" disabled={!content.trim() || !theme}>

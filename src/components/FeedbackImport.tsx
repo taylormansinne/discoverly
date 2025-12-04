@@ -33,7 +33,8 @@ export function FeedbackImport({ onImport }: FeedbackImportProps) {
       const alignment = Math.min(5, Math.max(1, parseInt(parts[3]) || 3)) as BusinessAlignment;
       const cost = (['low', 'medium', 'high', 'very-high'].includes(parts[4]) ? parts[4] : 'medium') as CostEstimate;
 
-      return { content, theme, importance, businessAlignment: alignment, costEstimate: cost, source };
+      const proposalLink = parts[5]?.trim() || undefined;
+      return { content, theme, importance, businessAlignment: alignment, costEstimate: cost, source, proposalLink };
     });
   };
 
@@ -48,7 +49,8 @@ export function FeedbackImport({ onImport }: FeedbackImportProps) {
         importance: (['critical', 'high', 'medium', 'low'].includes(item.importance) ? item.importance : 'medium') as Importance,
         businessAlignment: Math.min(5, Math.max(1, parseInt(item.businessAlignment || item.alignment) || 3)) as BusinessAlignment,
         costEstimate: (['low', 'medium', 'high', 'very-high'].includes(item.costEstimate || item.cost) ? (item.costEstimate || item.cost) : 'medium') as CostEstimate,
-        source: item.source || source
+        source: item.source || source,
+        proposalLink: item.proposalLink || item.link || undefined
       }));
     } catch {
       throw new Error('Invalid JSON format');
@@ -127,11 +129,11 @@ export function FeedbackImport({ onImport }: FeedbackImportProps) {
             onChange={(e) => setRawInput(e.target.value)}
             placeholder={`Paste JSON array or pipe-delimited lines:
 
-JSON: [{"content": "...", "theme": "UX/UI", "importance": "high", "alignment": 4, "cost": "low"}]
+JSON: [{"content": "...", "theme": "UX/UI", "importance": "high", "alignment": 4, "cost": "low", "proposalLink": "https://..."}]
 
 Or pipe-delimited (one per line):
-User needs better search | Feature Request | high | 4 | medium
-Fix login bug | Bug Report | critical | 5 | low`}
+content | theme | importance | alignment | cost | proposalLink (optional)
+User needs better search | Feature Request | high | 4 | medium | https://notion.so/...`}
             className="min-h-[120px] font-mono text-sm"
           />
         </div>
@@ -140,7 +142,7 @@ Fix login bug | Bug Report | critical | 5 | low`}
           <FileJson className="w-4 h-4" />
           <span>JSON or</span>
           <FileText className="w-4 h-4" />
-          <span>content | theme | importance | alignment (1-5) | cost</span>
+          <span>content | theme | importance | alignment | cost | link</span>
         </div>
 
         <div className="flex gap-2">

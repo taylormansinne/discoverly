@@ -3,10 +3,10 @@ import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS,
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X } from 'lucide-react';
+import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FeedbackCardProps {
@@ -37,7 +37,8 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
     importance: item.importance,
     businessAlignment: item.businessAlignment,
     costEstimate: item.costEstimate,
-    source: item.source || ''
+    source: item.source || '',
+    proposalLink: item.proposalLink || ''
   });
 
   const handleSave = () => {
@@ -47,7 +48,8 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
       importance: editData.importance,
       businessAlignment: editData.businessAlignment,
       costEstimate: editData.costEstimate,
-      source: editData.source.trim() || undefined
+      source: editData.source.trim() || undefined,
+      proposalLink: editData.proposalLink.trim() || undefined
     });
     setIsEditing(false);
   };
@@ -59,7 +61,8 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
       importance: item.importance,
       businessAlignment: item.businessAlignment,
       costEstimate: item.costEstimate,
-      source: item.source || ''
+      source: item.source || '',
+      proposalLink: item.proposalLink || ''
     });
     setIsEditing(false);
   };
@@ -129,16 +132,29 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
             </div>
           </div>
 
-          <Select value={editData.source || ''} onValueChange={(v) => setEditData(prev => ({ ...prev, source: v }))}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="Source (optional)" />
-            </SelectTrigger>
-            <SelectContent>
-              {SOURCE_OPTIONS.map(s => (
-                <SelectItem key={s} value={s}>{s}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Select value={editData.source || ''} onValueChange={(v) => setEditData(prev => ({ ...prev, source: v }))}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Source (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {SOURCE_OPTIONS.map(s => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="relative">
+              <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="url"
+                placeholder="Proposal link (optional)"
+                value={editData.proposalLink}
+                onChange={(e) => setEditData(prev => ({ ...prev, proposalLink: e.target.value }))}
+                className="h-9 pl-9"
+              />
+            </div>
+          </div>
 
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={handleCancel}>
@@ -206,6 +222,18 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
                 <span className="text-xs bg-secondary px-2 py-0.5 rounded">
                   {item.source}
                 </span>
+              )}
+
+              {item.proposalLink && (
+                <a
+                  href={item.proposalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  Proposal
+                </a>
               )}
             </div>
           </div>

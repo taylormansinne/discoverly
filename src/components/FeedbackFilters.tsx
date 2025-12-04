@@ -1,17 +1,19 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, Importance, CostEstimate } from '@/types/feedback';
-import { Filter, X } from 'lucide-react';
+import { THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS } from '@/types/feedback';
+import { Filter, X, Zap } from 'lucide-react';
 
 interface FeedbackFiltersProps {
   themeFilter: string;
   importanceFilter: string;
   costFilter: string;
   sortBy: string;
+  quickWinsOnly: boolean;
   onThemeChange: (value: string) => void;
   onImportanceChange: (value: string) => void;
   onCostChange: (value: string) => void;
   onSortChange: (value: string) => void;
+  onQuickWinsChange: (value: boolean) => void;
   onClear: () => void;
 }
 
@@ -20,13 +22,15 @@ export function FeedbackFilters({
   importanceFilter,
   costFilter,
   sortBy,
+  quickWinsOnly,
   onThemeChange,
   onImportanceChange,
   onCostChange,
   onSortChange,
+  onQuickWinsChange,
   onClear
 }: FeedbackFiltersProps) {
-  const hasFilters = themeFilter !== 'all' || importanceFilter !== 'all' || costFilter !== 'all';
+  const hasFilters = themeFilter !== 'all' || importanceFilter !== 'all' || costFilter !== 'all' || quickWinsOnly;
 
   return (
     <div className="flex flex-wrap items-center gap-3 p-4 bg-card rounded-lg border border-border/50">
@@ -34,6 +38,16 @@ export function FeedbackFilters({
         <Filter className="w-4 h-4" />
         Filters:
       </div>
+
+      <Button
+        variant={quickWinsOnly ? "default" : "outline"}
+        size="sm"
+        onClick={() => onQuickWinsChange(!quickWinsOnly)}
+        className="gap-1.5"
+      >
+        <Zap className="w-4 h-4" />
+        Quick Wins
+      </Button>
 
       <Select value={themeFilter} onValueChange={onThemeChange}>
         <SelectTrigger className="w-[150px]">

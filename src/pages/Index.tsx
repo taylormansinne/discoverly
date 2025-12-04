@@ -5,7 +5,8 @@ import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackFilters } from '@/components/FeedbackFilters';
 import { StatsOverview } from '@/components/StatsOverview';
 import { FeedbackAnalytics } from '@/components/FeedbackAnalytics';
-import { Importance, CostEstimate } from '@/types/feedback';
+import { FeedbackImport } from '@/components/FeedbackImport';
+import { FeedbackItem, Importance, CostEstimate } from '@/types/feedback';
 import { BarChart3, Inbox } from 'lucide-react';
 
 const importanceOrder = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -18,9 +19,18 @@ const Index = () => {
   const [importanceFilter, setImportanceFilter] = useState('all');
   const [costFilter, setCostFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
+  const [quickWinsOnly, setQuickWinsOnly] = useState(false);
 
   const filteredAndSorted = useMemo(() => {
     let result = [...items];
+
+    // Quick Wins: low cost + (high/critical importance OR alignment >= 4)
+    if (quickWinsOnly) {
+      result = result.filter(i => 
+        i.costEstimate === 'low' && 
+        (i.importance === 'critical' || i.importance === 'high' || i.businessAlignment >= 4)
+      );
+    }
 
     if (themeFilter !== 'all') {
       result = result.filter(i => i.theme === themeFilter);
@@ -50,12 +60,17 @@ const Index = () => {
     }
 
     return result;
-  }, [items, themeFilter, importanceFilter, costFilter, sortBy]);
+  }, [items, themeFilter, importanceFilter, costFilter, sortBy, quickWinsOnly]);
 
   const clearFilters = () => {
     setThemeFilter('all');
     setImportanceFilter('all');
     setCostFilter('all');
+    setQuickWinsOnly(false);
+  };
+
+  const handleBulkImport = (importedItems: Omit<FeedbackItem, 'id' | 'createdAt'>[]) => {
+    importedItems.forEach(item => addFeedback(item));
   };
 
   return (
@@ -78,6 +93,7 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-6">
             <FeedbackForm onSubmit={addFeedback} />
+            <FeedbackImport onImport={handleBulkImport} />
             <FeedbackAnalytics items={items} />
           </div>
 
@@ -89,10 +105,12 @@ const Index = () => {
               importanceFilter={importanceFilter}
               costFilter={costFilter}
               sortBy={sortBy}
+              quickWinsOnly={quickWinsOnly}
               onThemeChange={setThemeFilter}
               onImportanceChange={setImportanceFilter}
               onCostChange={setCostFilter}
               onSortChange={setSortBy}
+              onQuickWinsChange={setQuickWinsOnly}
               onClear={clearFilters}
             />
 

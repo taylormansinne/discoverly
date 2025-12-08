@@ -20,6 +20,7 @@ const Index = () => {
   const [costFilter, setCostFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
   const [quickWinsOnly, setQuickWinsOnly] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   const filteredAndSorted = useMemo(() => {
     let result = [...items];
@@ -92,8 +93,8 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-6">
-            <FeedbackForm onSubmit={addFeedback} />
-            <FeedbackImport onImport={handleBulkImport} />
+            <FeedbackForm onSubmit={addFeedback} onImportClick={() => setShowImport(true)} />
+            <FeedbackImport onImport={handleBulkImport} isOpen={showImport} onClose={() => setShowImport(false)} />
             <FeedbackAnalytics items={items} />
           </div>
 

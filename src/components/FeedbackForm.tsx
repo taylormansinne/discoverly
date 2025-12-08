@@ -6,13 +6,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
-import { Plus, Star, Link } from 'lucide-react';
+import { Plus, Star, Link, Upload } from 'lucide-react';
 
 interface FeedbackFormProps {
   onSubmit: (item: Omit<FeedbackItem, 'id' | 'createdAt'>) => void;
+  onImportClick?: () => void;
 }
 
-export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
+export function FeedbackForm({ onSubmit, onImportClick }: FeedbackFormProps) {
   const [content, setContent] = useState('');
   const [theme, setTheme] = useState<string>('');
   const [importance, setImportance] = useState<Importance>('medium');
@@ -47,10 +48,18 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
   return (
     <Card className="border-border/50 shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-          <Plus className="w-5 h-5 text-primary" />
-          Add Feedback
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <Plus className="w-5 h-5 text-primary" />
+            Add Feedback
+          </CardTitle>
+          {onImportClick && (
+            <Button variant="outline" size="sm" onClick={onImportClick} className="gap-1.5">
+              <Upload className="w-4 h-4" />
+              Import
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

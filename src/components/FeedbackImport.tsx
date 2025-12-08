@@ -10,14 +10,13 @@ import { Upload, FileJson, FileText } from 'lucide-react';
 
 interface FeedbackImportProps {
   onImport: (items: Omit<FeedbackItem, 'id' | 'createdAt'>[]) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-
-
-export function FeedbackImport({ onImport }: FeedbackImportProps) {
+export function FeedbackImport({ onImport, isOpen, onClose }: FeedbackImportProps) {
   const [source, setSource] = useState<string>('Jira');
   const [rawInput, setRawInput] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false);
   const { toast } = useToast();
 
   const parseJiraFormat = (text: string): Omit<FeedbackItem, 'id' | 'createdAt'>[] => {
@@ -80,20 +79,15 @@ export function FeedbackImport({ onImport }: FeedbackImportProps) {
 
       onImport(parsed);
       setRawInput('');
-      setIsExpanded(false);
+      onClose();
       toast({ title: 'Import successful', description: `Imported ${parsed.length} feedback item(s)` });
     } catch (error) {
       toast({ title: 'Import failed', description: 'Please check the format and try again', variant: 'destructive' });
     }
   };
 
-  if (!isExpanded) {
-    return (
-      <Button variant="outline" onClick={() => setIsExpanded(true)} className="w-full gap-2">
-        <Upload className="w-4 h-4" />
-        Import from External Source
-      </Button>
-    );
+  if (!isOpen) {
+    return null;
   }
 
   return (
@@ -149,7 +143,7 @@ User needs better search | Feature Request | high | 4 | medium | https://notion.
           <Button onClick={handleImport} className="flex-1">
             Import
           </Button>
-          <Button variant="outline" onClick={() => setIsExpanded(false)}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
         </div>

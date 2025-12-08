@@ -12,6 +12,8 @@ export interface FeedbackItem {
   createdAt: Date;
   source?: string;
   proposalLink?: string;
+  persona?: string;
+  productArea?: string;
 }
 
 export const THEMES = [
@@ -25,6 +27,32 @@ export const THEMES = [
   'Support',
   'Integration',
   'Security',
+  'Other'
+] as const;
+
+export const PERSONAS = [
+  'Power User',
+  'New User',
+  'Enterprise Admin',
+  'Developer',
+  'Small Business Owner',
+  'Casual User',
+  'Technical Lead',
+  'Product Manager',
+  'Other'
+] as const;
+
+export const PRODUCT_AREAS = [
+  'Dashboard',
+  'Reports',
+  'Settings',
+  'Authentication',
+  'API',
+  'Mobile App',
+  'Notifications',
+  'Billing',
+  'Integrations',
+  'Search',
   'Other'
 ] as const;
 

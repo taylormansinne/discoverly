@@ -5,6 +5,7 @@ import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackFilters } from '@/components/FeedbackFilters';
 import { StatsOverview } from '@/components/StatsOverview';
 import { FeedbackAnalytics } from '@/components/FeedbackAnalytics';
+import { PatternAnalytics } from '@/components/PatternAnalytics';
 import { FeedbackImport } from '@/components/FeedbackImport';
 import { FeedbackItem, Importance, CostEstimate } from '@/types/feedback';
 import { BarChart3, Inbox } from 'lucide-react';
@@ -95,6 +96,7 @@ const Index = () => {
           <div className="lg:col-span-1 space-y-6">
             <FeedbackForm onSubmit={addFeedback} onImportClick={() => setShowImport(true)} />
             <FeedbackImport onImport={handleBulkImport} isOpen={showImport} onClose={() => setShowImport(false)} />
+            <PatternAnalytics items={items} />
             <FeedbackAnalytics items={items} />
           </div>
 

@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
+import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, PERSONAS, PRODUCT_AREAS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
 import { Plus, Star, Link, Upload } from 'lucide-react';
 
 interface FeedbackFormProps {
@@ -21,6 +21,8 @@ export function FeedbackForm({ onSubmit, onImportClick }: FeedbackFormProps) {
   const [costEstimate, setCostEstimate] = useState<CostEstimate>('medium');
   const [source, setSource] = useState('');
   const [proposalLink, setProposalLink] = useState('');
+  const [persona, setPersona] = useState('');
+  const [productArea, setProductArea] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,9 @@ export function FeedbackForm({ onSubmit, onImportClick }: FeedbackFormProps) {
       businessAlignment,
       costEstimate,
       source: source.trim() || undefined,
-      proposalLink: proposalLink.trim() || undefined
+      proposalLink: proposalLink.trim() || undefined,
+      persona: persona || undefined,
+      productArea: productArea || undefined
     });
 
     setContent('');
@@ -43,6 +47,8 @@ export function FeedbackForm({ onSubmit, onImportClick }: FeedbackFormProps) {
     setCostEstimate('medium');
     setSource('');
     setProposalLink('');
+    setPersona('');
+    setProductArea('');
   };
 
   return (
@@ -137,6 +143,36 @@ export function FeedbackForm({ onSubmit, onImportClick }: FeedbackFormProps) {
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label} ({opt.description})
                     </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="persona">Persona (optional)</Label>
+              <Select value={persona} onValueChange={setPersona}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select persona" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PERSONAS.map(p => (
+                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="productArea">Product Area (optional)</Label>
+              <Select value={productArea} onValueChange={setProductArea}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select product area" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRODUCT_AREAS.map(a => (
+                    <SelectItem key={a} value={a}>{a}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

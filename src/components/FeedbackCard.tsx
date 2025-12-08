@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
+import { FeedbackItem, THEMES, IMPORTANCE_OPTIONS, COST_OPTIONS, SOURCE_OPTIONS, PERSONAS, PRODUCT_AREAS, Importance, BusinessAlignment, CostEstimate } from '@/types/feedback';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink } from 'lucide-react';
+import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink, User, Layout } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FeedbackCardProps {
@@ -38,7 +38,9 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
     businessAlignment: item.businessAlignment,
     costEstimate: item.costEstimate,
     source: item.source || '',
-    proposalLink: item.proposalLink || ''
+    proposalLink: item.proposalLink || '',
+    persona: item.persona || '',
+    productArea: item.productArea || ''
   });
 
   const handleSave = () => {
@@ -49,7 +51,9 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
       businessAlignment: editData.businessAlignment,
       costEstimate: editData.costEstimate,
       source: editData.source.trim() || undefined,
-      proposalLink: editData.proposalLink.trim() || undefined
+      proposalLink: editData.proposalLink.trim() || undefined,
+      persona: editData.persona || undefined,
+      productArea: editData.productArea || undefined
     });
     setIsEditing(false);
   };
@@ -62,7 +66,9 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
       businessAlignment: item.businessAlignment,
       costEstimate: item.costEstimate,
       source: item.source || '',
-      proposalLink: item.proposalLink || ''
+      proposalLink: item.proposalLink || '',
+      persona: item.persona || '',
+      productArea: item.productArea || ''
     });
     setIsEditing(false);
   };
@@ -132,10 +138,32 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Select value={editData.persona || ''} onValueChange={(v) => setEditData(prev => ({ ...prev, persona: v }))}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Persona" />
+              </SelectTrigger>
+              <SelectContent>
+                {PERSONAS.map(p => (
+                  <SelectItem key={p} value={p}>{p}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={editData.productArea || ''} onValueChange={(v) => setEditData(prev => ({ ...prev, productArea: v }))}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Product Area" />
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_AREAS.map(a => (
+                  <SelectItem key={a} value={a}>{a}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Select value={editData.source || ''} onValueChange={(v) => setEditData(prev => ({ ...prev, source: v }))}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="Source (optional)" />
+                <SelectValue placeholder="Source" />
               </SelectTrigger>
               <SelectContent>
                 {SOURCE_OPTIONS.map(s => (
@@ -148,7 +176,7 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
               <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="url"
-                placeholder="Proposal link (optional)"
+                placeholder="Proposal link"
                 value={editData.proposalLink}
                 onChange={(e) => setEditData(prev => ({ ...prev, proposalLink: e.target.value }))}
                 className="h-9 pl-9"
@@ -221,6 +249,20 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
               {item.source && (
                 <span className="text-xs bg-secondary px-2 py-0.5 rounded">
                   {item.source}
+                </span>
+              )}
+
+              {item.persona && (
+                <span className="flex items-center gap-1 text-xs">
+                  <User className="w-3 h-3" />
+                  {item.persona}
+                </span>
+              )}
+
+              {item.productArea && (
+                <span className="flex items-center gap-1 text-xs">
+                  <Layout className="w-3 h-3" />
+                  {item.productArea}
                 </span>
               )}
 

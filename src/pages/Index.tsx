@@ -106,8 +106,6 @@ const Index = () => {
             <div ref={importRef}>
               <FeedbackImport onImport={handleBulkImport} isOpen={showImport} onClose={() => setShowImport(false)} />
             </div>
-            <PatternAnalytics items={items} />
-            <FeedbackAnalytics items={items} />
           </div>
 
           <div className="lg:col-span-2 space-y-6">
@@ -146,6 +144,11 @@ const Index = () => {
               )}
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 space-y-6">
+          <PatternAnalytics items={items} />
+          <FeedbackAnalytics items={items} />
         </div>
       </main>
     </div>

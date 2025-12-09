@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useFeedback } from '@/hooks/useFeedback';
 import { FeedbackForm } from '@/components/FeedbackForm';
 import { FeedbackCard } from '@/components/FeedbackCard';
@@ -22,6 +22,14 @@ const Index = () => {
   const [sortBy, setSortBy] = useState('date-desc');
   const [quickWinsOnly, setQuickWinsOnly] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const importRef = useRef<HTMLDivElement>(null);
+
+  const handleImportClick = () => {
+    setShowImport(true);
+    setTimeout(() => {
+      importRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
 
   const filteredAndSorted = useMemo(() => {
     let result = [...items];
@@ -94,8 +102,10 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-6">
-            <FeedbackForm onSubmit={addFeedback} onImportClick={() => setShowImport(true)} />
-            <FeedbackImport onImport={handleBulkImport} isOpen={showImport} onClose={() => setShowImport(false)} />
+            <FeedbackForm onSubmit={addFeedback} onImportClick={handleImportClick} />
+            <div ref={importRef}>
+              <FeedbackImport onImport={handleBulkImport} isOpen={showImport} onClose={() => setShowImport(false)} />
+            </div>
             <PatternAnalytics items={items} />
             <FeedbackAnalytics items={items} />
           </div>

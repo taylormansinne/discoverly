@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Feedback Capture",
+  "name": "Discoverly Capture",
   "version": "1.0.0",
-  "description": "Quickly capture feedback and sync it to your Feedback Analysis app",
+  "description": "Quickly capture feedback and sync it to Discoverly",
   "permissions": ["activeTab"],
   "action": {
     "default_popup": "popup.html",

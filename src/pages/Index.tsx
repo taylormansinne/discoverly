@@ -14,7 +14,7 @@ const importanceOrder = { critical: 0, high: 1, medium: 2, low: 3 };
 const costOrder = { low: 0, medium: 1, high: 2, 'very-high': 3 };
 
 const Index = () => {
-  const { items, addFeedback, deleteFeedback, updateFeedback } = useFeedback();
+  const { items, loading, addFeedback, deleteFeedback, updateFeedback, refresh } = useFeedback();
   
   const [themeFilter, setThemeFilter] = useState('all');
   const [importanceFilter, setImportanceFilter] = useState('all');
@@ -126,7 +126,12 @@ const Index = () => {
             />
 
             <div className="space-y-3">
-              {filteredAndSorted.length === 0 ? (
+              {loading ? (
+                <div className="text-center py-16 text-muted-foreground">
+                  <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <p className="text-sm">Loading feedback...</p>
+                </div>
+              ) : filteredAndSorted.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
                   <Inbox className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium">No feedback yet</p>

@@ -30,7 +30,8 @@ export function FeedbackImport({ onImport, isOpen, onClose }: FeedbackImportProp
       importance: 'medium' as Importance,
       businessAlignment: 3 as BusinessAlignment,
       costEstimate: 'medium' as CostEstimate,
-      source
+      source,
+      status: 'idea' as const
     }));
   };
 

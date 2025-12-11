@@ -1,6 +1,7 @@
 export type Importance = 'critical' | 'high' | 'medium' | 'low';
 export type BusinessAlignment = 1 | 2 | 3 | 4 | 5;
 export type CostEstimate = 'low' | 'medium' | 'high' | 'very-high';
+export type FeedbackStatus = 'idea' | 'planned' | 'released';
 
 export interface FeedbackItem {
   id: string;
@@ -14,6 +15,7 @@ export interface FeedbackItem {
   proposalLink?: string;
   persona?: string;
   productArea?: string;
+  status: FeedbackStatus;
 }
 
 export const THEMES = [
@@ -80,3 +82,9 @@ export const SOURCE_OPTIONS = [
   'Support Ticket',
   'Other'
 ] as const;
+
+export const STATUS_OPTIONS: { value: FeedbackStatus; label: string }[] = [
+  { value: 'idea', label: 'Idea' },
+  { value: 'planned', label: 'Planned' },
+  { value: 'released', label: 'Released' }
+];

@@ -37,7 +37,8 @@ export function FeedbackForm({ onSubmit, onImportClick }: FeedbackFormProps) {
       source: source.trim() || undefined,
       proposalLink: proposalLink.trim() || undefined,
       persona: persona || undefined,
-      productArea: productArea || undefined
+      productArea: productArea || undefined,
+      status: 'idea'
     });
 
     setContent('');

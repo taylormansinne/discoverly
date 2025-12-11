@@ -31,6 +31,7 @@ export function useFeedback() {
         proposalLink: item.proposal_link || undefined,
         persona: item.persona || undefined,
         productArea: item.product_area || undefined,
+        status: (item.status as FeedbackItem['status']) || 'idea',
       }));
 
       setItems(mapped);
@@ -58,6 +59,7 @@ export function useFeedback() {
         proposal_link: item.proposalLink || null,
         persona: item.persona || null,
         product_area: item.productArea || null,
+        status: item.status || 'idea',
       })
       .select()
       .single();
@@ -79,6 +81,7 @@ export function useFeedback() {
       proposalLink: data.proposal_link || undefined,
       persona: data.persona || undefined,
       productArea: data.product_area || undefined,
+      status: (data.status as FeedbackItem['status']) || 'idea',
     };
 
     setItems(prev => [newItem, ...prev]);
@@ -109,6 +112,7 @@ export function useFeedback() {
     if (updates.proposalLink !== undefined) dbUpdates.proposal_link = updates.proposalLink || null;
     if (updates.persona !== undefined) dbUpdates.persona = updates.persona || null;
     if (updates.productArea !== undefined) dbUpdates.product_area = updates.productArea || null;
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
 
     const { error } = await supabase
       .from('feedback_items')

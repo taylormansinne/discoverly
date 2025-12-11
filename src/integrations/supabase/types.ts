@@ -26,6 +26,7 @@ export type Database = {
           product_area: string | null
           proposal_link: string | null
           source: string | null
+          status: string
           theme: string
         }
         Insert: {
@@ -39,6 +40,7 @@ export type Database = {
           product_area?: string | null
           proposal_link?: string | null
           source?: string | null
+          status?: string
           theme?: string
         }
         Update: {
@@ -52,9 +54,42 @@ export type Database = {
           product_area?: string | null
           proposal_link?: string | null
           source?: string | null
+          status?: string
           theme?: string
         }
         Relationships: []
+      }
+      feedback_votes: {
+        Row: {
+          created_at: string
+          feedback_id: string
+          id: string
+          user_id: string
+          vote_type: number
+        }
+        Insert: {
+          created_at?: string
+          feedback_id: string
+          id?: string
+          user_id: string
+          vote_type: number
+        }
+        Update: {
+          created_at?: string
+          feedback_id?: string
+          id?: string
+          user_id?: string
+          vote_type?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_votes_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

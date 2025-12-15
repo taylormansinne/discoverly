@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink, User, Layout } from 'lucide-react';
+import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink, User, Layout, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FeedbackCardProps {
   item: FeedbackItem;
   onDelete: (id: string) => void;
   onUpdate: (id: string, updates: Partial<FeedbackItem>) => void;
+  voteCount?: { upvotes: number; downvotes: number; userVote: number | null };
 }
 
 const importanceStyles = {
@@ -29,7 +30,7 @@ const costLabels = {
   'very-high': '3+ months'
 };
 
-export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
+export function FeedbackCard({ item, onDelete, onUpdate, voteCount }: FeedbackCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     content: item.content,
@@ -212,6 +213,18 @@ export function FeedbackCard({ item, onDelete, onUpdate }: FeedbackCardProps) {
               <Badge className={cn('border', importanceStyles[item.importance])}>
                 {item.importance.charAt(0).toUpperCase() + item.importance.slice(1)}
               </Badge>
+              {voteCount && (voteCount.upvotes > 0 || voteCount.downvotes > 0) && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <ThumbsUp className="w-3 h-3" />
+                    {voteCount.upvotes}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <ThumbsDown className="w-3 h-3" />
+                    {voteCount.downvotes}
+                  </span>
+                </div>
+              )}
             </div>
             
             <p className="text-foreground leading-relaxed mb-3">

@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFeedback } from '@/hooks/useFeedback';
+import { useVotes } from '@/hooks/useVotes';
 import { FeedbackForm } from '@/components/FeedbackForm';
 import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackFilters } from '@/components/FeedbackFilters';
@@ -18,6 +19,8 @@ const costOrder = { low: 0, medium: 1, high: 2, 'very-high': 3 };
 
 const Index = () => {
   const { items, loading, addFeedback, deleteFeedback, updateFeedback, refresh } = useFeedback();
+  const feedbackIds = useMemo(() => items.map(i => i.id), [items]);
+  const { voteCounts } = useVotes(feedbackIds);
   
   const [themeFilter, setThemeFilter] = useState('all');
   const [importanceFilter, setImportanceFilter] = useState('all');
@@ -153,6 +156,7 @@ const Index = () => {
                     item={item}
                     onDelete={deleteFeedback}
                     onUpdate={updateFeedback}
+                    voteCount={voteCounts[item.id]}
                   />
                 ))
               )}

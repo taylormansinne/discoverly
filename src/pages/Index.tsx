@@ -40,11 +40,12 @@ const Index = () => {
   const filteredAndSorted = useMemo(() => {
     let result = [...items];
 
-    // Quick Wins: low cost + (high/critical importance OR alignment >= 4)
+    // Quick Wins: critical/high importance OR alignment >= 4
     if (quickWinsOnly) {
       result = result.filter(i => 
-        i.costEstimate === 'low' && 
-        (i.importance === 'critical' || i.importance === 'high' || i.businessAlignment >= 4)
+        i.importance === 'critical' || 
+        i.importance === 'high' || 
+        i.businessAlignment >= 4
       );
     }
 

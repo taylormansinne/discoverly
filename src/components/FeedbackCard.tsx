@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink, User, Layout, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Star, Trash2, Calendar, Tag, DollarSign, Pencil, Check, X, Link, ExternalLink, User, Layout, ThumbsUp, ThumbsDown, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FeedbackCardProps {
@@ -31,6 +31,8 @@ const costLabels = {
 };
 
 export function FeedbackCard({ item, onDelete, onUpdate, voteCount }: FeedbackCardProps) {
+  // Quick Win criteria: critical/high importance OR alignment >= 4
+  const isQuickWin = item.importance === 'critical' || item.importance === 'high' || item.businessAlignment >= 4;
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     content: item.content,
@@ -206,6 +208,12 @@ export function FeedbackCard({ item, onDelete, onUpdate, voteCount }: FeedbackCa
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-2">
+              {isQuickWin && (
+                <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30 dark:bg-amber-500/20 dark:text-amber-400">
+                  <Zap className="w-3 h-3 mr-1 fill-current" />
+                  Quick Win
+                </Badge>
+              )}
               <Badge variant="outline" className="font-medium">
                 <Tag className="w-3 h-3 mr-1" />
                 {item.theme}

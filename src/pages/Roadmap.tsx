@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronUp, ChevronDown, Lightbulb, Clock, CheckCircle2, ArrowLeft, LogIn, LogOut, Tag } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChevronUp, ChevronDown, Lightbulb, Clock, CheckCircle2, ArrowLeft, LogIn, LogOut, Tag, LayoutGrid, GanttChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import discoverlyLogo from '@/assets/discoverly-logo.png';
+import { GanttTimeline } from '@/components/GanttTimeline';
 
 type Status = 'idea' | 'planned' | 'released';
 
@@ -25,7 +27,7 @@ export default function Roadmap() {
   const { user, signOut } = useAuth();
   const feedbackIds = useMemo(() => items.map(i => i.id), [items]);
   const { voteCounts, vote } = useVotes(feedbackIds);
-  const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
+  const [viewMode, setViewMode] = useState<'board' | 'timeline'>('board');
 
   const handleVote = async (feedbackId: string, voteType: 1 | -1) => {
     if (!user) {
@@ -170,47 +172,63 @@ export default function Roadmap() {
                   </Link>
                 </Button>
               )}
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'board' | 'timeline')} className="ml-4">
+                <TabsList className="h-9">
+                  <TabsTrigger value="board" className="gap-1.5 px-3">
+                    <LayoutGrid className="w-4 h-4" />
+                    Board
+                  </TabsTrigger>
+                  <TabsTrigger value="timeline" className="gap-1.5 px-3">
+                    <GanttChart className="w-4 h-4" />
+                    Timeline
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {(['idea', 'planned', 'released'] as Status[]).map(status => {
-            const config = statusConfig[status];
-            const Icon = config.icon;
-            const statusItems = itemsByStatus[status];
+        {viewMode === 'board' ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(['idea', 'planned', 'released'] as Status[]).map(status => {
+              const config = statusConfig[status];
+              const Icon = config.icon;
+              const statusItems = itemsByStatus[status];
 
-            return (
-              <div key={status} className="space-y-4">
-                <Card className={cn('border', config.color)}>
-                  <CardHeader className="py-3 px-4">
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Icon className="w-4 h-4" />
-                      {config.label}
-                      <Badge variant="secondary" className="ml-auto">
-                        {statusItems.length}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                </Card>
+              return (
+                <div key={status} className="space-y-4">
+                  <Card className={cn('border', config.color)}>
+                    <CardHeader className="py-3 px-4">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <Icon className="w-4 h-4" />
+                        {config.label}
+                        <Badge variant="secondary" className="ml-auto">
+                          {statusItems.length}
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
 
-                <div className="space-y-3">
-                  {statusItems.length === 0 ? (
-                    <p className="text-center text-sm text-muted-foreground py-8">
-                      No items yet
-                    </p>
-                  ) : (
-                    statusItems.map(item => (
-                      <RoadmapCard key={item.id} item={item} />
-                    ))
-                  )}
+                  <div className="space-y-3">
+                    {statusItems.length === 0 ? (
+                      <p className="text-center text-sm text-muted-foreground py-8">
+                        No items yet
+                      </p>
+                    ) : (
+                      statusItems.map(item => (
+                        <RoadmapCard key={item.id} item={item} />
+                      ))
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <GanttTimeline items={items} voteCounts={voteCounts} />
+        )}
       </main>
     </div>
   );

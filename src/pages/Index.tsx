@@ -8,6 +8,7 @@ import { FeedbackFilters } from '@/components/FeedbackFilters';
 import { StatsOverview } from '@/components/StatsOverview';
 import { FeedbackAnalytics } from '@/components/FeedbackAnalytics';
 import { PatternAnalytics } from '@/components/PatternAnalytics';
+import { PrioritizationDashboard } from '@/components/PrioritizationDashboard';
 import { FeedbackImport } from '@/components/FeedbackImport';
 import { FeedbackItem, Importance, CostEstimate } from '@/types/feedback';
 import { Inbox, Map } from 'lucide-react';
@@ -165,9 +166,12 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="mt-8 space-y-6">
-          <PatternAnalytics items={items} />
-          <FeedbackAnalytics items={items} />
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PrioritizationDashboard items={items} voteCounts={voteCounts} />
+          <div className="space-y-6">
+            <PatternAnalytics items={items} />
+            <FeedbackAnalytics items={items} />
+          </div>
         </div>
       </main>
     </div>

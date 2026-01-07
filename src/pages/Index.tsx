@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFeedback } from '@/hooks/useFeedback';
 import { useVotes } from '@/hooks/useVotes';
+import { useFeatures } from '@/hooks/useFeatures';
 import { FeedbackForm } from '@/components/FeedbackForm';
 import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackFilters } from '@/components/FeedbackFilters';
@@ -9,8 +10,9 @@ import { StatsOverview } from '@/components/StatsOverview';
 import { FeedbackAnalytics } from '@/components/FeedbackAnalytics';
 import { PatternAnalytics } from '@/components/PatternAnalytics';
 import { PrioritizationDashboard } from '@/components/PrioritizationDashboard';
+import { FeatureClusters } from '@/components/FeatureClusters';
 import { FeedbackImport } from '@/components/FeedbackImport';
-import { FeedbackItem, Importance, CostEstimate } from '@/types/feedback';
+import { FeedbackItem } from '@/types/feedback';
 import { Inbox, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import discoverlyLogo from '@/assets/discoverly-logo.png';
@@ -22,6 +24,11 @@ const Index = () => {
   const { items, loading, addFeedback, deleteFeedback, updateFeedback, refresh } = useFeedback();
   const feedbackIds = useMemo(() => items.map(i => i.id), [items]);
   const { voteCounts } = useVotes(feedbackIds);
+  const { features, addFeature, updateFeature, deleteFeature } = useFeatures();
+
+  const handleLinkFeedback = async (feedbackId: string, featureId: string | undefined) => {
+    await updateFeedback(feedbackId, { featureId });
+  };
   
   const [themeFilter, setThemeFilter] = useState('all');
   const [importanceFilter, setImportanceFilter] = useState('all');
@@ -167,7 +174,18 @@ const Index = () => {
         </div>
 
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PrioritizationDashboard items={items} voteCounts={voteCounts} />
+          <div className="space-y-6">
+            <FeatureClusters
+              features={features}
+              feedbackItems={items}
+              voteCounts={voteCounts}
+              onAddFeature={addFeature}
+              onUpdateFeature={updateFeature}
+              onDeleteFeature={deleteFeature}
+              onLinkFeedback={handleLinkFeedback}
+            />
+            <PrioritizationDashboard items={items} voteCounts={voteCounts} />
+          </div>
           <div className="space-y-6">
             <PatternAnalytics items={items} />
             <FeedbackAnalytics items={items} />

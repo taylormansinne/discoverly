@@ -14,12 +14,40 @@ export type Database = {
   }
   public: {
     Tables: {
+      features: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       feedback_items: {
         Row: {
           business_alignment: number
           content: string
           cost_estimate: string
           created_at: string
+          feature_id: string | null
           id: string
           importance: string
           persona: string | null
@@ -34,6 +62,7 @@ export type Database = {
           content: string
           cost_estimate?: string
           created_at?: string
+          feature_id?: string | null
           id?: string
           importance?: string
           persona?: string | null
@@ -48,6 +77,7 @@ export type Database = {
           content?: string
           cost_estimate?: string
           created_at?: string
+          feature_id?: string | null
           id?: string
           importance?: string
           persona?: string | null
@@ -57,7 +87,15 @@ export type Database = {
           status?: string
           theme?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "feedback_items_feature_id_fkey"
+            columns: ["feature_id"]
+            isOneToOne: false
+            referencedRelation: "features"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feedback_votes: {
         Row: {

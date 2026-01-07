@@ -16,6 +16,7 @@ export interface FeedbackItem {
   persona?: string;
   productArea?: string;
   status: FeedbackStatus;
+  featureId?: string;
 }
 
 export const THEMES = [

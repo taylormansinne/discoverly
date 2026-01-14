@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { FeedbackItem, CostEstimate, Importance } from '@/types/feedback';
+import { ScoringWeights } from '@/hooks/useScoringPreferences';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, Tooltip as RechartsTooltip } from 'recharts';
-import { Trophy, Zap, TrendingUp, Target, Clock, ThumbsUp, Scale, Info } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import { Trophy, Zap, Target, Clock, Scale, Info } from 'lucide-react';
 
 interface VoteCounts {
   [feedbackId: string]: {
@@ -18,15 +18,8 @@ interface VoteCounts {
 interface PrioritizationDashboardProps {
   items: FeedbackItem[];
   voteCounts: VoteCounts;
+  weights: ScoringWeights;
 }
-
-// Scoring weights
-const WEIGHTS = {
-  votes: 0.3,        // 30% - Net vote score
-  importance: 0.25,  // 25% - Importance level
-  alignment: 0.25,   // 25% - Business alignment
-  cost: 0.2,         // 20% - Inverse cost (lower cost = higher score)
-};
 
 // Normalize importance to 0-100
 const importanceScore: Record<Importance, number> = {
@@ -54,7 +47,7 @@ interface ScoredItem extends FeedbackItem {
   netVotes: number;
 }
 
-export function PrioritizationDashboard({ items, voteCounts }: PrioritizationDashboardProps) {
+export function PrioritizationDashboard({ items, voteCounts, weights }: PrioritizationDashboardProps) {
   const scoredItems = useMemo(() => {
     if (items.length === 0) return [];
 
@@ -78,10 +71,10 @@ export function PrioritizationDashboard({ items, voteCounts }: PrioritizationDas
       const costValue = costScore[item.costEstimate];
 
       const compositeScore = 
-        WEIGHTS.votes * normalizedVoteScore +
-        WEIGHTS.importance * importanceValue +
-        WEIGHTS.alignment * alignmentValue +
-        WEIGHTS.cost * costValue;
+        weights.votes * normalizedVoteScore +
+        weights.importance * importanceValue +
+        weights.alignment * alignmentValue +
+        weights.cost * costValue;
 
       return {
         ...item,
@@ -108,10 +101,10 @@ export function PrioritizationDashboard({ items, voteCounts }: PrioritizationDas
   const chartData = topItems.map(item => ({
     name: item.content.length > 25 ? item.content.substring(0, 25) + '...' : item.content,
     score: item.compositeScore,
-    votes: item.normalizedVoteScore * WEIGHTS.votes,
-    importance: item.importanceValue * WEIGHTS.importance,
-    alignment: item.alignmentValue * WEIGHTS.alignment,
-    cost: item.costValue * WEIGHTS.cost,
+    votes: item.normalizedVoteScore * weights.votes,
+    importance: item.importanceValue * weights.importance,
+    alignment: item.alignmentValue * weights.alignment,
+    cost: item.costValue * weights.cost,
   }));
 
   const tooltipStyle = {
@@ -136,8 +129,8 @@ export function PrioritizationDashboard({ items, voteCounts }: PrioritizationDas
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
               <p className="text-sm">
-                Composite score = Votes ({WEIGHTS.votes * 100}%) + Importance ({WEIGHTS.importance * 100}%) + 
-                Business Alignment ({WEIGHTS.alignment * 100}%) + Low Cost Bonus ({WEIGHTS.cost * 100}%)
+                Composite score = Votes ({Math.round(weights.votes * 100)}%) + Importance ({Math.round(weights.importance * 100)}%) + 
+                Business Alignment ({Math.round(weights.alignment * 100)}%) + Low Cost Bonus ({Math.round(weights.cost * 100)}%)
               </p>
             </TooltipContent>
           </Tooltip>
@@ -212,44 +205,44 @@ export function PrioritizationDashboard({ items, voteCounts }: PrioritizationDas
                     <TooltipTrigger asChild>
                       <div 
                         className="bg-chart-1 transition-all" 
-                        style={{ width: `${item.normalizedVoteScore * WEIGHTS.votes}%` }}
+                        style={{ width: `${item.normalizedVoteScore * weights.votes}%` }}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Votes: {item.netVotes} ({Math.round(item.normalizedVoteScore * WEIGHTS.votes)} pts)</p>
+                      <p>Votes: {item.netVotes} ({Math.round(item.normalizedVoteScore * weights.votes)} pts)</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div 
                         className="bg-chart-2 transition-all" 
-                        style={{ width: `${item.importanceValue * WEIGHTS.importance}%` }}
+                        style={{ width: `${item.importanceValue * weights.importance}%` }}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Importance: {item.importance} ({Math.round(item.importanceValue * WEIGHTS.importance)} pts)</p>
+                      <p>Importance: {item.importance} ({Math.round(item.importanceValue * weights.importance)} pts)</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div 
                         className="bg-chart-3 transition-all" 
-                        style={{ width: `${item.alignmentValue * WEIGHTS.alignment}%` }}
+                        style={{ width: `${item.alignmentValue * weights.alignment}%` }}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Alignment: {item.businessAlignment}/5 ({Math.round(item.alignmentValue * WEIGHTS.alignment)} pts)</p>
+                      <p>Alignment: {item.businessAlignment}/5 ({Math.round(item.alignmentValue * weights.alignment)} pts)</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div 
                         className="bg-chart-4 transition-all" 
-                        style={{ width: `${item.costValue * WEIGHTS.cost}%` }}
+                        style={{ width: `${item.costValue * weights.cost}%` }}
                       />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Cost Efficiency: {item.costEstimate} ({Math.round(item.costValue * WEIGHTS.cost)} pts)</p>
+                      <p>Cost Efficiency: {item.costEstimate} ({Math.round(item.costValue * weights.cost)} pts)</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -262,19 +255,19 @@ export function PrioritizationDashboard({ items, voteCounts }: PrioritizationDas
         <div className="flex flex-wrap gap-3 pt-2 border-t border-border/50">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-3 h-3 rounded-sm bg-chart-1" />
-            <span>Votes ({WEIGHTS.votes * 100}%)</span>
+            <span>Votes ({Math.round(weights.votes * 100)}%)</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-3 h-3 rounded-sm bg-chart-2" />
-            <span>Importance ({WEIGHTS.importance * 100}%)</span>
+            <span>Importance ({Math.round(weights.importance * 100)}%)</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-3 h-3 rounded-sm bg-chart-3" />
-            <span>Alignment ({WEIGHTS.alignment * 100}%)</span>
+            <span>Alignment ({Math.round(weights.alignment * 100)}%)</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-3 h-3 rounded-sm bg-chart-4" />
-            <span>Cost Efficiency ({WEIGHTS.cost * 100}%)</span>
+            <span>Cost Efficiency ({Math.round(weights.cost * 100)}%)</span>
           </div>
         </div>
 

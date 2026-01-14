@@ -129,6 +129,39 @@ export type Database = {
           },
         ]
       }
+      user_scoring_preferences: {
+        Row: {
+          alignment_weight: number
+          cost_weight: number
+          created_at: string
+          id: string
+          importance_weight: number
+          updated_at: string
+          user_id: string
+          votes_weight: number
+        }
+        Insert: {
+          alignment_weight?: number
+          cost_weight?: number
+          created_at?: string
+          id?: string
+          importance_weight?: number
+          updated_at?: string
+          user_id: string
+          votes_weight?: number
+        }
+        Update: {
+          alignment_weight?: number
+          cost_weight?: number
+          created_at?: string
+          id?: string
+          importance_weight?: number
+          updated_at?: string
+          user_id?: string
+          votes_weight?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

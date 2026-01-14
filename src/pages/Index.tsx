@@ -1,8 +1,9 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useFeedback } from '@/hooks/useFeedback';
 import { useVotes } from '@/hooks/useVotes';
 import { useFeatures } from '@/hooks/useFeatures';
+import { useScoringPreferences, ScoringWeights } from '@/hooks/useScoringPreferences';
 import { FeedbackForm } from '@/components/FeedbackForm';
 import { FeedbackCard } from '@/components/FeedbackCard';
 import { FeedbackFilters } from '@/components/FeedbackFilters';
@@ -11,6 +12,7 @@ import { FeedbackAnalytics } from '@/components/FeedbackAnalytics';
 import { PatternAnalytics } from '@/components/PatternAnalytics';
 import { PrioritizationDashboard } from '@/components/PrioritizationDashboard';
 import { FeatureClusters } from '@/components/FeatureClusters';
+import { ScoringSettingsPanel } from '@/components/ScoringSettingsPanel';
 import { FeedbackImport } from '@/components/FeedbackImport';
 import { FeedbackItem } from '@/types/feedback';
 import { Inbox, Map } from 'lucide-react';
@@ -25,6 +27,15 @@ const Index = () => {
   const feedbackIds = useMemo(() => items.map(i => i.id), [items]);
   const { voteCounts } = useVotes(feedbackIds);
   const { features, addFeature, updateFeature, deleteFeature } = useFeatures();
+  const { weights: savedWeights } = useScoringPreferences();
+  const [localWeights, setLocalWeights] = useState<ScoringWeights>(savedWeights);
+  
+  // Use local weights for live updates, fall back to saved weights
+  const activeWeights = localWeights;
+  
+  const handleWeightsChange = useCallback((weights: ScoringWeights) => {
+    setLocalWeights(weights);
+  }, []);
 
   const handleLinkFeedback = async (feedbackId: string, featureId: string | undefined) => {
     await updateFeedback(feedbackId, { featureId });
@@ -173,23 +184,28 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-6">
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <ScoringSettingsPanel onWeightsChange={handleWeightsChange} />
+          </div>
+          <div className="lg:col-span-2 space-y-6">
             <FeatureClusters
               features={features}
               feedbackItems={items}
               voteCounts={voteCounts}
+              weights={activeWeights}
               onAddFeature={addFeature}
               onUpdateFeature={updateFeature}
               onDeleteFeature={deleteFeature}
               onLinkFeedback={handleLinkFeedback}
             />
-            <PrioritizationDashboard items={items} voteCounts={voteCounts} />
+            <PrioritizationDashboard items={items} voteCounts={voteCounts} weights={activeWeights} />
           </div>
-          <div className="space-y-6">
-            <PatternAnalytics items={items} />
-            <FeedbackAnalytics items={items} />
-          </div>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PatternAnalytics items={items} />
+          <FeedbackAnalytics items={items} />
         </div>
       </main>
     </div>

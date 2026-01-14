@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { FeedbackItem, CostEstimate, Importance } from '@/types/feedback';
 import { Feature, FEATURE_STATUS_OPTIONS } from '@/types/feature';
+import { ScoringWeights } from '@/hooks/useScoringPreferences';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Layers, Plus, Link2, Unlink, Trash2, ChevronDown, ChevronUp, Target, TrendingUp, Info } from 'lucide-react';
+import { Layers, Plus, Link2, Unlink, Trash2, ChevronDown, ChevronUp, Target, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VoteCounts {
@@ -26,19 +27,12 @@ interface FeatureClustersProps {
   features: Feature[];
   feedbackItems: FeedbackItem[];
   voteCounts: VoteCounts;
+  weights: ScoringWeights;
   onAddFeature: (feature: Omit<Feature, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Feature | null>;
   onUpdateFeature: (id: string, updates: Partial<Feature>) => Promise<void>;
   onDeleteFeature: (id: string) => Promise<void>;
   onLinkFeedback: (feedbackId: string, featureId: string | undefined) => Promise<void>;
 }
-
-// Scoring weights (same as PrioritizationDashboard)
-const WEIGHTS = {
-  votes: 0.3,
-  importance: 0.25,
-  alignment: 0.25,
-  cost: 0.2,
-};
 
 const importanceScore: Record<Importance, number> = {
   critical: 100,
@@ -65,7 +59,8 @@ interface AggregatedScore {
 
 function calculateAggregatedScore(
   feedbackItems: FeedbackItem[],
-  voteCounts: VoteCounts
+  voteCounts: VoteCounts,
+  weights: ScoringWeights
 ): AggregatedScore {
   if (feedbackItems.length === 0) {
     return { composite: 0, votes: 0, importance: 0, alignment: 0, cost: 0, feedbackCount: 0 };
@@ -95,10 +90,10 @@ function calculateAggregatedScore(
   const normalizedVotes = Math.min(100, Math.max(0, (avgVotes + 10) / 20 * 100));
 
   const composite = 
-    WEIGHTS.votes * normalizedVotes +
-    WEIGHTS.importance * avgImportance +
-    WEIGHTS.alignment * avgAlignment +
-    WEIGHTS.cost * avgCost;
+    weights.votes * normalizedVotes +
+    weights.importance * avgImportance +
+    weights.alignment * avgAlignment +
+    weights.cost * avgCost;
 
   return {
     composite: Math.round(composite),
@@ -114,6 +109,7 @@ export function FeatureClusters({
   features,
   feedbackItems,
   voteCounts,
+  weights,
   onAddFeature,
   onUpdateFeature,
   onDeleteFeature,
@@ -150,10 +146,10 @@ export function FeatureClusters({
   const featureScores = useMemo(() => {
     const scores: Record<string, AggregatedScore> = {};
     features.forEach(f => {
-      scores[f.id] = calculateAggregatedScore(feedbackByFeature[f.id] || [], voteCounts);
+      scores[f.id] = calculateAggregatedScore(feedbackByFeature[f.id] || [], voteCounts, weights);
     });
     return scores;
-  }, [features, feedbackByFeature, voteCounts]);
+  }, [features, feedbackByFeature, voteCounts, weights]);
 
   // Sort features by composite score
   const sortedFeatures = useMemo(() => 
@@ -321,10 +317,10 @@ export function FeatureClusters({
                     {/* Score Breakdown */}
                     {score.feedbackCount > 0 && (
                       <div className="flex gap-0.5 h-2 rounded-full overflow-hidden bg-muted/50">
-                        <div className="bg-chart-1" style={{ width: `${score.votes * WEIGHTS.votes}%` }} />
-                        <div className="bg-chart-2" style={{ width: `${score.importance * WEIGHTS.importance}%` }} />
-                        <div className="bg-chart-3" style={{ width: `${score.alignment * WEIGHTS.alignment}%` }} />
-                        <div className="bg-chart-4" style={{ width: `${score.cost * WEIGHTS.cost}%` }} />
+                        <div className="bg-chart-1" style={{ width: `${score.votes * weights.votes}%` }} />
+                        <div className="bg-chart-2" style={{ width: `${score.importance * weights.importance}%` }} />
+                        <div className="bg-chart-3" style={{ width: `${score.alignment * weights.alignment}%` }} />
+                        <div className="bg-chart-4" style={{ width: `${score.cost * weights.cost}%` }} />
                       </div>
                     )}
 
@@ -463,7 +459,7 @@ export function FeatureClusters({
         {unlinkedFeedback.length > 0 && (
           <div className="pt-2 border-t border-border/50">
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5" />
               {unlinkedFeedback.length} feedback item{unlinkedFeedback.length !== 1 ? 's' : ''} not linked to any feature
             </p>
           </div>

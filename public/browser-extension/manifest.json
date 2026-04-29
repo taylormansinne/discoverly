@@ -3,7 +3,7 @@
   "name": "Discoverly Capture",
   "version": "1.0.0",
   "description": "Quickly capture feedback and sync it to Discoverly",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

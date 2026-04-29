@@ -119,7 +119,7 @@ export function useFeedback() {
 
     const { error } = await supabase
       .from('feedback_items')
-      .update(dbUpdates)
+      .update(dbUpdates as never)
       .eq('id', id);
 
     if (error) {

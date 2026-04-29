@@ -76,7 +76,7 @@ export function useFeatures() {
 
     const { error } = await supabase
       .from('features')
-      .update(dbUpdates)
+      .update(dbUpdates as never)
       .eq('id', id);
 
     if (error) {
